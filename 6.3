@@ -2,107 +2,768 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bank Transaction System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Banking App with JWT</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f6f6f6;
-            padding: 30px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        h1 {
-            color: #333;
-        }
+        
         .container {
-            background-color: white;
-            padding: 20px 30px;
-            width: 400px;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
         }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .section h4 {
+            color: #764ba2;
+            margin: 20px 0 15px 0;
+            font-size: 1.2em;
+        }
+        
         input {
             width: 100%;
-            padding: 8px;
+            padding: 12px;
             margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
         }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
         button {
             width: 100%;
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
+            padding: 12px;
+            margin: 10px 0;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 16px;
-        }
-        button:hover {
-            background-color: #0056b3;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
         }
-        #result {
-            margin-top: 20px;
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .balance-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .balance-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .account-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .account-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        .jwt-info {
+            background: #e7f3ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .jwt-info p {
+            margin: 5px 0;
+            color: #0c5460;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        
+        .jwt-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
             font-weight: bold;
         }
-        .success {
-            color: green;
+        
+        .jwt-valid {
+            background: #d4edda;
+            color: #155724;
         }
-        .error {
-            color: red;
+        
+        .jwt-expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .transaction-history {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .transaction-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .transaction-item.debit {
+            border-left-color: #ff4757;
+        }
+        
+        .transaction-item.credit {
+            border-left-color: #2ed573;
+        }
+        
+        .demo-accounts {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border: 1px solid #ffeeba;
+        }
+        
+        .demo-accounts h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .demo-accounts p {
+            color: #856404;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+        
+        .security-badge {
+            background: #2ed573;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
 
-<h1>🏦 Bank Transaction System</h1>
 <div class="container">
-    <label for="fromId">From Account ID:</label>
-    <input type="number" id="fromId" placeholder="Enter sender account ID">
+    <h1>🏦 Banking App with JWT</h1>
 
-    <label for="toId">To Account ID:</label>
-    <input type="number" id="toId" placeholder="Enter receiver account ID">
+    <!-- Register Section -->
+    <div id="registerSection" class="section">
+        <h3>Create Account</h3>
+        <div class="security-badge">🔐 JWT Authentication Enabled</div>
+        <input type="text" id="regUsername" placeholder="Username">
+        <input type="password" id="regPassword" placeholder="Password">
+        <input type="number" id="regInitialBalance" placeholder="Initial Balance (₹)" value="10000">
+        <button class="btn-primary" onclick="register()">Register</button>
+        <div id="registerMsg"></div>
+        <button class="btn-secondary" onclick="showLogin()">Already have an account? Login</button>
+    </div>
 
-    <label for="amount">Amount:</label>
-    <input type="number" id="amount" placeholder="Enter transfer amount">
+    <!-- Login Section -->
+    <div id="loginSection" class="section hidden">
+        <h3>Login</h3>
+        <div class="security-badge">🔐 JWT Authentication Enabled</div>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button class="btn-primary" onclick="login()">Login</button>
+        <div id="loginMsg"></div>
+        <button class="btn-secondary" onclick="showRegister()">New user? Register</button>
+        
+        <div class="demo-accounts">
+            <h4>🎯 Demo Accounts</h4>
+            <p><strong>alice</strong> / pass123 (Balance: ₹15,000)</p>
+            <p><strong>bob</strong> / pass123 (Balance: ₹20,000)</p>
+            <p><strong>charlie</strong> / pass123 (Balance: ₹8,000)</p>
+            <p style="margin-top: 10px; font-size: 11px;">🔒 JWT tokens expire in 30 minutes</p>
+        </div>
+    </div>
 
-    <button onclick="performTransaction()">Transfer Money</button>
+    <!-- Banking Section -->
+    <div id="bankSection" class="section hidden">
+        <h3>Welcome, <span id="userName"></span>! 👋</h3>
+        
+        <div class="jwt-info">
+            <p><strong>🔑 JWT Token Status:</strong> <span id="jwtStatus" class="jwt-status jwt-valid">VALID</span></p>
+            <p><strong>Expires:</strong> <span id="jwtExpiry"></span></p>
+            <p style="margin-top: 8px;"><strong>Token:</strong> <span id="jwtToken" style="font-family: monospace;"></span></p>
+        </div>
+        
+        <div class="account-info">
+            <p><strong>Account ID:</strong> <span id="accountId"></span></p>
+            <p><strong>Account Type:</strong> Savings</p>
+        </div>
+        
+        <div class="balance-card">
+            <div>Current Balance</div>
+            <div class="balance-amount">₹<span id="balance">0</span></div>
+        </div>
 
-    <div id="result"></div>
+        <h4>💸 Transfer Money</h4>
+        <input type="number" id="toId" placeholder="Recipient Account ID">
+        <input type="number" id="amount" placeholder="Amount (₹)">
+        <button class="btn-primary" onclick="transfer()">Transfer</button>
+        <div id="transferMsg"></div>
+
+        <h4>📜 Recent Transactions</h4>
+        <div id="transactionHistory" class="transaction-history"></div>
+
+        <button class="btn-danger" onclick="logout()">Logout</button>
+    </div>
 </div>
 
 <script>
-async function performTransaction() {
-    const fromId = document.getElementById("fromId").value;
-    const toId = document.getElementById("toId").value;
-    const amount = document.getElementById("amount").value;
-    const result = document.getElementById("result");
+// ============================================
+// JWT UTILITIES
+// ============================================
 
-    if (!fromId || !toId || !amount) {
-        result.innerHTML = "⚠️ Please fill all fields.";
-        result.className = "error";
+const JWT_SECRET = 'bank-secret-key-2024';
+const JWT_EXPIRY_MINUTES = 30;
+
+// Simple Base64 encoding/decoding
+function base64UrlEncode(str) {
+    return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+function base64UrlDecode(str) {
+    str = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (str.length % 4) str += '=';
+    return atob(str);
+}
+
+// Create JWT Token
+function createJWT(payload) {
+    const header = {
+        alg: 'HS256',
+        typ: 'JWT'
+    };
+    
+    const now = Math.floor(Date.now() / 1000);
+    const exp = now + (JWT_EXPIRY_MINUTES * 60);
+    
+    const jwtPayload = {
+        ...payload,
+        iat: now,
+        exp: exp
+    };
+    
+    const encodedHeader = base64UrlEncode(JSON.stringify(header));
+    const encodedPayload = base64UrlEncode(JSON.stringify(jwtPayload));
+    
+    // In real implementation, this would use HMAC-SHA256
+    // For demo, we'll use a simple signature
+    const signature = base64UrlEncode(JWT_SECRET + encodedHeader + encodedPayload);
+    
+    return `${encodedHeader}.${encodedPayload}.${signature}`;
+}
+
+// Verify and Decode JWT Token
+function verifyJWT(token) {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        
+        const [header, payload, signature] = parts;
+        
+        // Verify signature
+        const expectedSignature = base64UrlEncode(JWT_SECRET + header + payload);
+        if (signature !== expectedSignature) {
+            console.error('Invalid JWT signature');
+            return null;
+        }
+        
+        // Decode payload
+        const decodedPayload = JSON.parse(base64UrlDecode(payload));
+        
+        // Check expiration
+        const now = Math.floor(Date.now() / 1000);
+        if (decodedPayload.exp && decodedPayload.exp < now) {
+            console.error('JWT token expired');
+            return null;
+        }
+        
+        return decodedPayload;
+    } catch (e) {
+        console.error('JWT verification failed:', e);
+        return null;
+    }
+}
+
+// ============================================
+// MOCK DATABASE
+// ============================================
+
+const users = {
+    alice: { password: 'pass123', accountId: 1001, balance: 15000, transactions: [] },
+    bob: { password: 'pass123', accountId: 1002, balance: 20000, transactions: [] },
+    charlie: { password: 'pass123', accountId: 1003, balance: 8000, transactions: [] }
+};
+
+let jwtToken = null;
+let tokenCheckInterval = null;
+
+// ============================================
+// API SIMULATION WITH JWT
+// ============================================
+
+// Mock API: Register
+function apiRegister(username, password, initialBalance) {
+    if (users[username]) {
+        return { success: false, message: 'Username already exists' };
+    }
+    
+    const accountId = 1000 + Object.keys(users).length + 1;
+    users[username] = {
+        password: password,
+        accountId: accountId,
+        balance: initialBalance,
+        transactions: []
+    };
+    
+    return { success: true, message: 'Account created successfully', accountId: accountId };
+}
+
+// Mock API: Login (Returns JWT)
+function apiLogin(username, password) {
+    const user = users[username];
+    if (!user || user.password !== password) {
+        return { success: false, message: 'Invalid credentials' };
+    }
+    
+    const token = createJWT({
+        username: username,
+        accountId: user.accountId,
+        role: 'USER'
+    });
+    
+    return { success: true, token: token, username: username };
+}
+
+// Mock API: Get Balance (Requires JWT)
+function apiGetBalance(token) {
+    const payload = verifyJWT(token);
+    if (!payload) {
+        return { success: false, message: 'Invalid or expired token', expired: true };
+    }
+    
+    const user = users[payload.username];
+    if (!user) {
+        return { success: false, message: 'User not found' };
+    }
+    
+    return { success: true, balance: user.balance };
+}
+
+// Mock API: Transfer (Requires JWT)
+function apiTransfer(token, toId, amount) {
+    const payload = verifyJWT(token);
+    if (!payload) {
+        return { success: false, message: 'Invalid or expired token. Please login again.', expired: true };
+    }
+    
+    // Get sender account from JWT (SECURE - not from user input)
+    const fromUsername = payload.username;
+    const fromAccount = users[fromUsername];
+    const fromId = fromAccount.accountId;
+    
+    // Find recipient
+    let toUsername = null;
+    for (let username in users) {
+        if (users[username].accountId === toId) {
+            toUsername = username;
+            break;
+        }
+    }
+    
+    if (!toUsername) {
+        return { success: false, message: 'Recipient account not found' };
+    }
+    
+    if (fromId === toId) {
+        return { success: false, message: 'Cannot transfer to your own account' };
+    }
+    
+    if (fromAccount.balance < amount) {
+        return { success: false, message: 'Insufficient balance' };
+    }
+    
+    // Perform transfer
+    fromAccount.balance -= amount;
+    users[toUsername].balance += amount;
+    
+    // Record transactions
+    const timestamp = new Date().toLocaleString();
+    fromAccount.transactions.unshift({
+        type: 'debit',
+        amount: amount,
+        to: toId,
+        timestamp: timestamp
+    });
+    users[toUsername].transactions.unshift({
+        type: 'credit',
+        amount: amount,
+        from: fromId,
+        timestamp: timestamp
+    });
+    
+    return { 
+        success: true, 
+        message: `Successfully transferred ₹${amount} to Account ${toId}`,
+        newBalance: fromAccount.balance
+    };
+}
+
+// Mock API: Get Transactions (Requires JWT)
+function apiGetTransactions(token) {
+    const payload = verifyJWT(token);
+    if (!payload) {
+        return { success: false, message: 'Invalid or expired token', expired: true };
+    }
+    
+    const user = users[payload.username];
+    if (!user) {
+        return { success: false, message: 'User not found' };
+    }
+    
+    return { success: true, transactions: user.transactions };
+}
+
+// ============================================
+// UI FUNCTIONS
+// ============================================
+
+window.onload = function() {
+    showLogin();
+};
+
+function showRegister() {
+    document.getElementById('registerSection').classList.remove('hidden');
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('bankSection').classList.add('hidden');
+}
+
+function showLogin() {
+    document.getElementById('loginSection').classList.remove('hidden');
+    document.getElementById('registerSection').classList.add('hidden');
+    document.getElementById('bankSection').classList.add('hidden');
+    stopTokenCheck();
+}
+
+function showBanking() {
+    document.getElementById('bankSection').classList.remove('hidden');
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('registerSection').classList.add('hidden');
+    startTokenCheck();
+}
+
+// Register
+function register() {
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const initialBalance = parseFloat(document.getElementById('regInitialBalance').value) || 10000;
+    const msgEl = document.getElementById('registerMsg');
+
+    if (!username || !password) {
+        msgEl.innerHTML = '<div class="message error">❌ Please fill all fields</div>';
         return;
     }
 
-    result.innerHTML = "⏳ Processing transaction...";
-    result.className = "";
-
-    try {
-        const response = await fetch(
-            `/api/transactions/transfer?fromId=${fromId}&toId=${toId}&amount=${amount}`,
-            { method: "POST" }
-        );
-        const text = await response.text();
-
-        if (response.ok) {
-            result.innerHTML = "✅ " + text;
-            result.className = "success";
-        } else {
-            result.innerHTML = "❌ Error: " + text;
-            result.className = "error";
-        }
-    } catch (err) {
-        result.innerHTML = "❌ Network error: " + err.message;
-        result.className = "error";
+    const result = apiRegister(username, password, initialBalance);
+    
+    if (result.success) {
+        msgEl.innerHTML = `<div class="message success">✅ ${result.message}<br>Account ID: ${result.accountId}</div>`;
+        setTimeout(() => {
+            document.getElementById('regUsername').value = '';
+            document.getElementById('regPassword').value = '';
+            showLogin();
+        }, 1500);
+    } else {
+        msgEl.innerHTML = `<div class="message error">❌ ${result.message}</div>`;
     }
+}
+
+// Login
+function login() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const msgEl = document.getElementById('loginMsg');
+
+    if (!username || !password) {
+        msgEl.innerHTML = '<div class="message error">❌ Please fill all fields</div>';
+        return;
+    }
+
+    const result = apiLogin(username, password);
+    
+    if (result.success) {
+        jwtToken = result.token;
+        msgEl.innerHTML = '<div class="message success">✅ Login successful! JWT token generated.</div>';
+        
+        setTimeout(() => {
+            const user = users[username];
+            document.getElementById('userName').textContent = username;
+            document.getElementById('accountId').textContent = user.accountId;
+            updateJWTDisplay();
+            updateBalance();
+            updateTransactionHistory();
+            showBanking();
+        }, 500);
+    } else {
+        msgEl.innerHTML = `<div class="message error">❌ ${result.message}</div>`;
+    }
+}
+
+// Transfer Money (with JWT)
+function transfer() {
+    const toId = parseInt(document.getElementById('toId').value);
+    const amount = parseFloat(document.getElementById('amount').value);
+    const msgEl = document.getElementById('transferMsg');
+
+    if (!toId || !amount || amount <= 0) {
+        msgEl.innerHTML = '<div class="message error">❌ Please enter valid recipient ID and amount</div>';
+        return;
+    }
+
+    const result = apiTransfer(jwtToken, toId, amount);
+    
+    if (result.success) {
+        msgEl.innerHTML = `<div class="message success">✅ ${result.message}</div>`;
+        document.getElementById('toId').value = '';
+        document.getElementById('amount').value = '';
+        updateBalance();
+        updateTransactionHistory();
+    } else {
+        msgEl.innerHTML = `<div class="message error">❌ ${result.message}</div>`;
+        
+        if (result.expired) {
+            setTimeout(() => {
+                alert('Your session has expired. Please login again.');
+                logout();
+            }, 1500);
+        }
+    }
+}
+
+// Update Balance
+function updateBalance() {
+    const result = apiGetBalance(jwtToken);
+    
+    if (result.success) {
+        document.getElementById('balance').textContent = result.balance.toFixed(2);
+    } else if (result.expired) {
+        alert('Your session has expired. Please login again.');
+        logout();
+    }
+}
+
+// Update Transaction History
+function updateTransactionHistory() {
+    const result = apiGetTransactions(jwtToken);
+    const historyEl = document.getElementById('transactionHistory');
+    
+    if (!result.success) {
+        if (result.expired) {
+            logout();
+        }
+        return;
+    }
+    
+    const transactions = result.transactions;
+
+    if (transactions.length === 0) {
+        historyEl.innerHTML = '<div class="message info">No transactions yet</div>';
+        return;
+    }
+
+    let html = '';
+    transactions.slice(0, 10).forEach(tx => {
+        const typeClass = tx.type === 'credit' ? 'credit' : 'debit';
+        const symbol = tx.type === 'credit' ? '+' : '-';
+        const direction = tx.type === 'credit' ? `from Account ${tx.from}` : `to Account ${tx.to}`;
+        
+        html += `
+            <div class="transaction-item ${typeClass}">
+                <strong>${symbol}₹${tx.amount}</strong> ${direction}
+                <br><small>${tx.timestamp}</small>
+            </div>
+        `;
+    });
+
+    historyEl.innerHTML = html;
+}
+
+// Update JWT Display
+function updateJWTDisplay() {
+    const payload = verifyJWT(jwtToken);
+    if (!payload) return;
+    
+    const expiryDate = new Date(payload.exp * 1000);
+    const tokenPreview = jwtToken.substring(0, 40) + '...';
+    
+    document.getElementById('jwtToken').textContent = tokenPreview;
+    document.getElementById('jwtExpiry').textContent = expiryDate.toLocaleString();
+    
+    updateTokenStatus();
+}
+
+// Check Token Status
+function updateTokenStatus() {
+    const payload = verifyJWT(jwtToken);
+    const statusEl = document.getElementById('jwtStatus');
+    
+    if (!payload) {
+        statusEl.textContent = 'EXPIRED';
+        statusEl.className = 'jwt-status jwt-expired';
+        return false;
+    }
+    
+    const now = Math.floor(Date.now() / 1000);
+    const timeLeft = payload.exp - now;
+    
+    if (timeLeft < 300) { // Less than 5 minutes
+        statusEl.textContent = `EXPIRING SOON (${Math.floor(timeLeft / 60)}m)`;
+        statusEl.className = 'jwt-status jwt-expired';
+    } else {
+        statusEl.textContent = 'VALID';
+        statusEl.className = 'jwt-status jwt-valid';
+    }
+    
+    return true;
+}
+
+// Start Token Check Interval
+function startTokenCheck() {
+    tokenCheckInterval = setInterval(() => {
+        if (!updateTokenStatus()) {
+            alert('Your session has expired. Please login again.');
+            logout();
+        }
+    }, 10000); // Check every 10 seconds
+}
+
+// Stop Token Check Interval
+function stopTokenCheck() {
+    if (tokenCheckInterval) {
+        clearInterval(tokenCheckInterval);
+        tokenCheckInterval = null;
+    }
+}
+
+// Logout
+function logout() {
+    jwtToken = null;
+    stopTokenCheck();
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    showLogin();
 }
 </script>
 

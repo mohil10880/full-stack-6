@@ -2,147 +2,461 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Banking App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Banking App</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial;
-            margin: 40px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        .section {
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
             margin-bottom: 30px;
-            border: 1px solid #ccc;
-            padding: 15px;
-            width: 400px;
-            border-radius: 6px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
-        input, button {
-            margin: 5px 0;
-            padding: 8px;
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .section h4 {
+            color: #764ba2;
+            margin: 20px 0 15px 0;
+            font-size: 1.2em;
+        }
+        
+        input {
             width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
         }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
         .hidden {
             display: none;
+        }
+        
+        .balance-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .balance-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .account-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .account-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        .transaction-history {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .transaction-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .transaction-item.debit {
+            border-left-color: #ff4757;
+        }
+        
+        .transaction-item.credit {
+            border-left-color: #2ed573;
+        }
+        
+        .demo-accounts {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border: 1px solid #ffeeba;
+        }
+        
+        .demo-accounts h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .demo-accounts p {
+            color: #856404;
+            font-size: 13px;
+            margin: 5px 0;
         }
     </style>
 </head>
 <body>
 
-<h1>🏦 Secure Banking App</h1>
+<div class="container">
+    <h1>🏦 Secure Banking App</h1>
 
-<div id="registerSection" class="section">
-    <h3>Register</h3>
-    <input type="text" id="regUsername" placeholder="Username">
-    <input type="password" id="regPassword" placeholder="Password">
-    <button onclick="register()">Register</button>
-    <p id="registerMsg"></p>
-</div>
+    <!-- Register Section -->
+    <div id="registerSection" class="section">
+        <h3>Create Account</h3>
+        <input type="text" id="regUsername" placeholder="Username">
+        <input type="password" id="regPassword" placeholder="Password">
+        <input type="number" id="regInitialBalance" placeholder="Initial Balance (₹)" value="10000">
+        <button class="btn-primary" onclick="register()">Register</button>
+        <div id="registerMsg"></div>
+        <button class="btn-secondary" onclick="showLogin()">Already have an account? Login</button>
+    </div>
 
-<div id="loginSection" class="section">
-    <h3>Login</h3>
-    <input type="text" id="loginUsername" placeholder="Username">
-    <input type="password" id="loginPassword" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p id="loginMsg"></p>
-</div>
+    <!-- Login Section -->
+    <div id="loginSection" class="section hidden">
+        <h3>Login</h3>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button class="btn-primary" onclick="login()">Login</button>
+        <div id="loginMsg"></div>
+        <button class="btn-secondary" onclick="showRegister()">New user? Register</button>
+        
+        <div class="demo-accounts">
+            <h4>🎯 Demo Accounts</h4>
+            <p><strong>alice</strong> / pass123 (Balance: ₹15,000)</p>
+            <p><strong>bob</strong> / pass123 (Balance: ₹20,000)</p>
+            <p><strong>charlie</strong> / pass123 (Balance: ₹8,000)</p>
+        </div>
+    </div>
 
-<div id="bankSection" class="section hidden">
-    <h3>Welcome, <span id="userName"></span></h3>
-    <p><strong>Balance:</strong> ₹<span id="balance">0</span></p>
+    <!-- Banking Section -->
+    <div id="bankSection" class="section hidden">
+        <h3>Welcome, <span id="userName"></span>! 👋</h3>
+        
+        <div class="account-info">
+            <p><strong>Account ID:</strong> <span id="accountId"></span></p>
+            <p><strong>Account Type:</strong> Savings</p>
+        </div>
+        
+        <div class="balance-card">
+            <div>Current Balance</div>
+            <div class="balance-amount">₹<span id="balance">0</span></div>
+        </div>
 
-    <h4>💸 Transfer Money</h4>
-    <input type="number" id="fromId" placeholder="From Account ID">
-    <input type="number" id="toId" placeholder="To Account ID">
-    <input type="number" id="amount" placeholder="Amount">
-    <button onclick="transfer()">Transfer</button>
-    <p id="transferMsg"></p>
+        <h4>💸 Transfer Money</h4>
+        <input type="number" id="toId" placeholder="Recipient Account ID">
+        <input type="number" id="amount" placeholder="Amount (₹)">
+        <button class="btn-primary" onclick="transfer()">Transfer</button>
+        <div id="transferMsg"></div>
 
-    <button onclick="logout()">Logout</button>
+        <h4>📜 Recent Transactions</h4>
+        <div id="transactionHistory" class="transaction-history"></div>
+
+        <button class="btn-danger" onclick="logout()">Logout</button>
+    </div>
 </div>
 
 <script>
-const BASE_URL = "http://localhost:8080/api";
-let jwtToken = null;
+// Mock Database
+const users = {
+    alice: { password: 'pass123', accountId: 1001, balance: 15000, transactions: [] },
+    bob: { password: 'pass123', accountId: 1002, balance: 20000, transactions: [] },
+    charlie: { password: 'pass123', accountId: 1003, balance: 8000, transactions: [] }
+};
 
-// ---------- Register ----------
-async function register() {
-    const username = document.getElementById("regUsername").value;
-    const password = document.getElementById("regPassword").value;
-    const res = await fetch(`${BASE_URL}/auth/register`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({username, password, role: "USER"})
-    });
-    const text = await res.text();
-    document.getElementById("registerMsg").innerText = text;
+let currentUser = null;
+
+// Initialize
+window.onload = function() {
+    showLogin();
+};
+
+// Show/Hide Sections
+function showRegister() {
+    document.getElementById('registerSection').classList.remove('hidden');
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('bankSection').classList.add('hidden');
 }
 
-// ---------- Login ----------
-async function login() {
-    const username = document.getElementById("loginUsername").value;
-    const password = document.getElementById("loginPassword").value;
+function showLogin() {
+    document.getElementById('loginSection').classList.remove('hidden');
+    document.getElementById('registerSection').classList.add('hidden');
+    document.getElementById('bankSection').classList.add('hidden');
+}
 
-    const res = await fetch(`${BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({username, password})
-    });
+function showBanking() {
+    document.getElementById('bankSection').classList.remove('hidden');
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('registerSection').classList.add('hidden');
+}
 
-    if (res.ok) {
-        jwtToken = await res.text();
-        localStorage.setItem("jwtToken", jwtToken);
-        document.getElementById("loginMsg").innerText = "✅ Login successful!";
-        showBankSection(username);
-    } else {
-        document.getElementById("loginMsg").innerText = "❌ Login failed!";
+// Register
+function register() {
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const initialBalance = parseFloat(document.getElementById('regInitialBalance').value) || 10000;
+    const msgEl = document.getElementById('registerMsg');
+
+    if (!username || !password) {
+        msgEl.innerHTML = '<div class="message error">❌ Please fill all fields</div>';
+        return;
     }
+
+    if (users[username]) {
+        msgEl.innerHTML = '<div class="message error">❌ Username already exists</div>';
+        return;
+    }
+
+    const accountId = 1000 + Object.keys(users).length + 1;
+    users[username] = {
+        password: password,
+        accountId: accountId,
+        balance: initialBalance,
+        transactions: []
+    };
+
+    msgEl.innerHTML = `<div class="message success">✅ Account created! Account ID: ${accountId}</div>`;
+    
+    setTimeout(() => {
+        document.getElementById('regUsername').value = '';
+        document.getElementById('regPassword').value = '';
+        showLogin();
+    }, 1500);
 }
 
-// ---------- Transfer ----------
-async function transfer() {
-    const fromId = document.getElementById("fromId").value;
-    const toId = document.getElementById("toId").value;
-    const amount = document.getElementById("amount").value;
+// Login
+function login() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const msgEl = document.getElementById('loginMsg');
 
-    const res = await fetch(`${BASE_URL}/transactions/transfer?fromId=${fromId}&toId=${toId}&amount=${amount}`, {
-        method: "POST",
-        headers: {
-            "Authorization": "Bearer " + jwtToken
+    if (!users[username] || users[username].password !== password) {
+        msgEl.innerHTML = '<div class="message error">❌ Invalid username or password</div>';
+        return;
+    }
+
+    currentUser = username;
+    msgEl.innerHTML = '<div class="message success">✅ Login successful!</div>';
+    
+    setTimeout(() => {
+        document.getElementById('userName').textContent = username;
+        document.getElementById('accountId').textContent = users[username].accountId;
+        updateBalance();
+        updateTransactionHistory();
+        showBanking();
+    }, 500);
+}
+
+// Transfer Money (SECURE - No IDOR vulnerability)
+function transfer() {
+    const toId = parseInt(document.getElementById('toId').value);
+    const amount = parseFloat(document.getElementById('amount').value);
+    const msgEl = document.getElementById('transferMsg');
+
+    // Validation
+    if (!toId || !amount || amount <= 0) {
+        msgEl.innerHTML = '<div class="message error">❌ Please enter valid recipient ID and amount</div>';
+        return;
+    }
+
+    // Get current user's account (SECURE: determined by session, not user input)
+    const fromAccount = users[currentUser];
+    const fromId = fromAccount.accountId;
+
+    // Find recipient by account ID
+    let toUsername = null;
+    for (let username in users) {
+        if (users[username].accountId === toId) {
+            toUsername = username;
+            break;
         }
+    }
+
+    if (!toUsername) {
+        msgEl.innerHTML = '<div class="message error">❌ Recipient account not found</div>';
+        return;
+    }
+
+    if (fromId === toId) {
+        msgEl.innerHTML = '<div class="message error">❌ Cannot transfer to your own account</div>';
+        return;
+    }
+
+    if (fromAccount.balance < amount) {
+        msgEl.innerHTML = '<div class="message error">❌ Insufficient balance</div>';
+        return;
+    }
+
+    // Perform transfer
+    fromAccount.balance -= amount;
+    users[toUsername].balance += amount;
+
+    // Record transactions
+    const timestamp = new Date().toLocaleString();
+    fromAccount.transactions.unshift({
+        type: 'debit',
+        amount: amount,
+        to: toId,
+        timestamp: timestamp
+    });
+    users[toUsername].transactions.unshift({
+        type: 'credit',
+        amount: amount,
+        from: fromId,
+        timestamp: timestamp
     });
 
-    const msg = await res.text();
-    document.getElementById("transferMsg").innerText = msg;
+    msgEl.innerHTML = `<div class="message success">✅ Successfully transferred ₹${amount} to Account ${toId}</div>`;
+    
+    // Clear inputs
+    document.getElementById('toId').value = '';
+    document.getElementById('amount').value = '';
+    
+    // Update UI
+    updateBalance();
+    updateTransactionHistory();
 }
 
-// ---------- Logout ----------
+// Update Balance Display
+function updateBalance() {
+    document.getElementById('balance').textContent = users[currentUser].balance.toFixed(2);
+}
+
+// Update Transaction History
+function updateTransactionHistory() {
+    const historyEl = document.getElementById('transactionHistory');
+    const transactions = users[currentUser].transactions;
+
+    if (transactions.length === 0) {
+        historyEl.innerHTML = '<div class="message info">No transactions yet</div>';
+        return;
+    }
+
+    let html = '';
+    transactions.slice(0, 10).forEach(tx => {
+        const typeClass = tx.type === 'credit' ? 'credit' : 'debit';
+        const symbol = tx.type === 'credit' ? '+' : '-';
+        const direction = tx.type === 'credit' ? `from Account ${tx.from}` : `to Account ${tx.to}`;
+        
+        html += `
+            <div class="transaction-item ${typeClass}">
+                <strong>${symbol}₹${tx.amount}</strong> ${direction}
+                <br><small>${tx.timestamp}</small>
+            </div>
+        `;
+    });
+
+    historyEl.innerHTML = html;
+}
+
+// Logout
 function logout() {
-    localStorage.removeItem("jwtToken");
-    jwtToken = null;
-    document.getElementById("bankSection").classList.add("hidden");
-    document.getElementById("loginSection").classList.remove("hidden");
-}
-
-// ---------- Helper to Show Bank Section ----------
-function showBankSection(username) {
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("registerSection").classList.add("hidden");
-    document.getElementById("bankSection").classList.remove("hidden");
-    document.getElementById("userName").innerText = username;
+    currentUser = null;
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    showLogin();
 }
 </script>
 
 </body>
 </html>
-@Bean
-public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-        @Override
-        public void addCorsMappings(CorsRegistry registry) {
-            registry.addMapping("/api/**")
-                    .allowedOrigins("http://localhost:5500")
-                    .allowedMethods("*")
-                    .allowedHeaders("*")
-                    .exposedHeaders("Authorization");
-        }
-    };
-}
